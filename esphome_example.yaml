@@ -1,0 +1,17 @@
+external_components:
+  - source:
+      type: local
+      path: esphome/components
+
+logger:
+  level: DEBUG
+
+esphome:
+  name: dc-blue-test
+  platform: ESP32
+  board: esp32dev
+  build_path: .build/dc_blue_test
+
+dc_blue:
+  data_pin: GPIO33
+#  symbol_period: 1000
