@@ -26,10 +26,10 @@ namespace esphome
       uint32_t process_queue[4];
       int process_queue_write = 0;
       int process_queue_read = 0;
+      int symbol_period = 900;
 
     protected:
       void process_frame(uint32_t);
-      int symbol_period = 900;
     };
 
   } // namespace dc_blue

@@ -1,5 +1,3 @@
-// Datasheet https://wiki.dfrobot.com/_A02YYUW_Waterproof_Ultrasonic_Sensor_SKU_SEN0311
-
 #include "dc_blue.h"
 #include "esphome/core/helpers.h"
 #include "esphome/core/log.h"
@@ -21,11 +19,8 @@ namespace esphome
     bool capturing_frame = false;
     int captured_bytes = 0;
 
-    unsigned long ticks = 0;
-
     void IRAM_ATTR Timer0_ISR()
     {
-      ticks++;
       bool value = instance->data_pin_->digital_read();
 
       if (waiting_for_header)
@@ -55,14 +50,18 @@ namespace esphome
 
         instance->process_queue[instance->process_queue_write] = frame;
         instance->process_queue_write++;
-        instance->process_queue_write = instance->process_queue_write % (sizeof(instance->process_queue)/sizeof(instance->process_queue[0]));
+        instance->process_queue_write = instance->process_queue_write % (sizeof(instance->process_queue) / sizeof(instance->process_queue[0]));
 
         frame = 0;
       }
     }
 
-    void IRAM_ATTR pinChangeIrq(hw_timer_t * timer) {
-      // timerWrite(timer, sample_period/2);
+    void IRAM_ATTR pinChangeIrq(hw_timer_t *timer)
+    {
+      if (waiting_for_header)
+      {
+        // timerWrite(timer, instance->symbol_period / 2);
+      }
     }
 
     void DcBlueComponent::setup()
@@ -73,7 +72,8 @@ namespace esphome
       if (data_pin_ != nullptr)
       {
         data_pin_->setup();
-        // data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_ANY_EDGE);
+        data_pin_->pin_mode(gpio::FLAG_INPUT);
+        // data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_RISING_EDGE);
       }
 
       timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
@@ -88,7 +88,7 @@ namespace esphome
         ESP_LOGD(TAG, "Reading queue location %d", process_queue_read);
         process_frame(process_queue[process_queue_read]);
         process_queue_read++;
-        process_queue_read = process_queue_read % (sizeof(instance->process_queue)/sizeof(instance->process_queue[0]));
+        process_queue_read = process_queue_read % (sizeof(instance->process_queue) / sizeof(instance->process_queue[0]));
       }
     }
 
