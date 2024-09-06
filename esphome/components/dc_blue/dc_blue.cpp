@@ -112,7 +112,32 @@ namespace esphome
 
     void DcBlueComponent::process_frame(uint32_t frame)
     {
-      ESP_LOGD(TAG, "Frame received: %08X", frame);
+      switch (frame)
+      {
+      case 0x002C2425:
+        ESP_LOGD(TAG, "Door closed");
+        break;
+      case 0x002C0C0D:
+        ESP_LOGD(TAG, "Opening/Closing");
+        break;
+      case 0x002C0607:
+        ESP_LOGD(TAG, "Door open");
+        break;
+
+      case 0x00551313:
+        ESP_LOGD(TAG, "Light on");
+        break;
+      case 0x00551515:
+        ESP_LOGD(TAG, "Light off");
+        break;
+
+      case 0x00550B0B:
+        ESP_LOGD(TAG, "Unlock");
+        break;
+
+      default:
+        ESP_LOGD(TAG, "Unknown frame received: %08X", frame);
+      }
     }
 
     void DcBlueComponent::dump_config()
