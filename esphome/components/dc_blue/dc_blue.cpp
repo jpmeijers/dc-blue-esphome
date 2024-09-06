@@ -3,6 +3,9 @@
 #include "esphome/core/log.h"
 #include <esp32-hal-timer.h>
 
+#define DEBUG_PIN 32
+#define TIMER_PIN 25
+
 namespace esphome
 {
   namespace dc_blue
@@ -13,14 +16,25 @@ namespace esphome
 
     hw_timer_t *Timer0_Cfg = NULL;
 
-    uint32_t header = 0xFFFFFFFF;
-    uint32_t frame = 0;
-    bool waiting_for_header = true;
-    bool capturing_frame = false;
-    int captured_bytes = 0;
+    volatile uint32_t header = 0xFFFFFFFF;
+    volatile uint32_t frame = 0;
+    volatile bool waiting_for_header = true;
+    volatile bool capturing_frame = false;
+    volatile int captured_bytes = 0;
+    volatile int timer_isr_calls = 0;
 
     void IRAM_ATTR Timer0_ISR()
     {
+      digitalWrite(TIMER_PIN, !digitalRead(TIMER_PIN));
+
+      timer_isr_calls++;
+      if (timer_isr_calls % 2 != 1)
+      {
+        return;
+      }
+
+      digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
+
       bool value = instance->data_pin_->digital_read();
 
       if (waiting_for_header)
@@ -58,10 +72,8 @@ namespace esphome
 
     void IRAM_ATTR pinChangeIrq(hw_timer_t *timer)
     {
-      if (waiting_for_header)
-      {
-        // timerWrite(timer, instance->symbol_period / 2);
-      }
+      timer_isr_calls = 0;
+      timerRestart(timer);
     }
 
     void DcBlueComponent::setup()
@@ -73,12 +85,15 @@ namespace esphome
       {
         data_pin_->setup();
         data_pin_->pin_mode(gpio::FLAG_INPUT);
-        // data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_RISING_EDGE);
+        data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_ANY_EDGE);
       }
 
       timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
-      timerAlarmWrite(Timer0_Cfg, this->symbol_period, true);
+      timerAlarmWrite(Timer0_Cfg, this->symbol_period / 2, true);
       timerAlarmEnable(Timer0_Cfg);
+
+      pinMode(DEBUG_PIN, OUTPUT);
+      pinMode(TIMER_PIN, OUTPUT);
     }
 
     void DcBlueComponent::loop()

@@ -22,7 +22,7 @@ CONFIG_SCHEMA = (
         {
             cv.GenerateID(): cv.declare_id(DcBlueComponent),
             cv.Required(CONF_DATA_PIN): pins.gpio_input_pin_schema,
-            cv.Optional("symbol_period", default=900): cv.int_range(min=100, max=10000),
+            cv.Optional("symbol_period", default=1000): cv.int_range(min=100, max=10000),
         }
     )
     .extend(cv.COMPONENT_SCHEMA)
