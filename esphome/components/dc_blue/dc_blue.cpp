@@ -72,8 +72,11 @@ namespace esphome
 
     void IRAM_ATTR pinChangeIrq(hw_timer_t *timer)
     {
-      timer_isr_calls = 0;
-      timerRestart(timer);
+      if (waiting_for_header)
+      {
+        timer_isr_calls = 0;
+        timerRestart(timer);
+      }
     }
 
     void DcBlueComponent::setup()
