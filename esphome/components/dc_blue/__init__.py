@@ -10,23 +10,18 @@ from esphome.const import CONF_ID
 from esphome import pins
 
 CODEOWNERS = ["@jpmeijers"]
-# DEPENDENCIES = ["sensor", "binary_sensor"]
+DEPENDENCIES = ["binary_sensor"]
 
 dc_blue_component_ns = cg.esphome_ns.namespace("dc_blue")
-DcBlueComponent = dc_blue_component_ns.class_(
-    "DcBlueComponent", cg.Component
-)
+DcBlueComponent = dc_blue_component_ns.class_("DcBlueComponent", cg.Component)
 
-CONFIG_SCHEMA = (
-    cv.Schema(
-        {
-            cv.GenerateID(): cv.declare_id(DcBlueComponent),
-            cv.Required(CONF_DATA_PIN): pins.gpio_input_pin_schema,
-            cv.Optional("symbol_period", default=900): cv.int_range(min=100, max=10000),
-        }
-    )
-    .extend(cv.COMPONENT_SCHEMA)
-)
+CONFIG_SCHEMA = cv.Schema(
+    {
+        cv.GenerateID(): cv.declare_id(DcBlueComponent),
+        cv.Required(CONF_DATA_PIN): pins.gpio_input_pin_schema,
+        cv.Optional("symbol_period", default=900): cv.int_range(min=100, max=10000),
+    }
+).extend(cv.COMPONENT_SCHEMA)
 
 
 async def to_code(config):

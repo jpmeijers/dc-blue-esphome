@@ -25,7 +25,7 @@ namespace esphome
 
     void IRAM_ATTR Timer0_ISR()
     {
-      digitalWrite(TIMER_PIN, !digitalRead(TIMER_PIN));
+      // digitalWrite(TIMER_PIN, !digitalRead(TIMER_PIN));
 
       timer_isr_calls++;
       if (timer_isr_calls % 2 != 1)
@@ -33,7 +33,7 @@ namespace esphome
         return;
       }
 
-      digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
+      // digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
 
       bool value = instance->data_pin_->digital_read();
 
@@ -95,8 +95,14 @@ namespace esphome
       timerAlarmWrite(Timer0_Cfg, this->symbol_period / 2, true);
       timerAlarmEnable(Timer0_Cfg);
 
-      pinMode(DEBUG_PIN, OUTPUT);
-      pinMode(TIMER_PIN, OUTPUT);
+      // pinMode(DEBUG_PIN, OUTPUT);
+      // pinMode(TIMER_PIN, OUTPUT);
+
+      ESP_LOGD(TAG, "Assume Light off");
+      if (this->light_binary_sensor_ != nullptr)
+      {
+        this->light_binary_sensor_->publish_state(false);
+      }
     }
 
     void DcBlueComponent::loop()
@@ -116,19 +122,63 @@ namespace esphome
       {
       case 0x002C2425:
         ESP_LOGD(TAG, "Door closed");
+        if (this->open_binary_sensor_ != nullptr)
+        {
+          this->open_binary_sensor_->publish_state(false);
+        }
+        if (this->closed_binary_sensor_ != nullptr)
+        {
+          this->closed_binary_sensor_->publish_state(true);
+        }
+        if (this->running_binary_sensor_ != nullptr)
+        {
+          this->running_binary_sensor_->publish_state(false);
+        }
         break;
       case 0x002C0C0D:
         ESP_LOGD(TAG, "Opening/Closing");
+        if (this->open_binary_sensor_ != nullptr)
+        {
+          this->open_binary_sensor_->publish_state(false);
+        }
+        if (this->closed_binary_sensor_ != nullptr)
+        {
+          this->closed_binary_sensor_->publish_state(false);
+        }
+        if (this->running_binary_sensor_ != nullptr)
+        {
+          this->running_binary_sensor_->publish_state(true);
+        }
         break;
       case 0x002C0607:
         ESP_LOGD(TAG, "Door open");
+        if (this->open_binary_sensor_ != nullptr)
+        {
+          this->open_binary_sensor_->publish_state(true);
+        }
+        if (this->closed_binary_sensor_ != nullptr)
+        {
+          this->closed_binary_sensor_->publish_state(false);
+        }
+        if (this->running_binary_sensor_ != nullptr)
+        {
+          this->running_binary_sensor_->publish_state(false);
+        }
         break;
 
       case 0x00551313:
         ESP_LOGD(TAG, "Light on");
+        if (this->light_binary_sensor_ != nullptr)
+        {
+          this->light_binary_sensor_->publish_state(true);
+        }
         break;
       case 0x00551515:
         ESP_LOGD(TAG, "Light off");
+        if (this->light_binary_sensor_ != nullptr)
+        {
+          this->light_binary_sensor_->publish_state(false);
+        }
         break;
 
       case 0x00550B0B:

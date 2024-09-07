@@ -5,6 +5,7 @@
 #include "esphome/core/component.h"
 #include "esphome/core/gpio.h"
 #include "esphome/core/hal.h"
+#include "esphome/components/binary_sensor/binary_sensor.h"
 
 namespace esphome
 {
@@ -15,6 +16,11 @@ namespace esphome
     {
 
     public:
+      SUB_BINARY_SENSOR(open)    // CONF_OPEN
+      SUB_BINARY_SENSOR(closed)  // CONF_CLOSED
+      SUB_BINARY_SENSOR(running) // CONF_RUNNING
+      SUB_BINARY_SENSOR(light)   // CONF_LIGHT
+
       // ========== INTERNAL METHODS ==========
       void setup() override;
       void loop() override;
