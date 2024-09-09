@@ -98,6 +98,8 @@ namespace esphome
       // pinMode(DEBUG_PIN, OUTPUT);
       // pinMode(TIMER_PIN, OUTPUT);
 
+      this->garage_cover_sensor_->setup();
+
       ESP_LOGD(TAG, "Assume Light off");
       if (this->light_binary_sensor_ != nullptr)
       {
@@ -122,47 +124,58 @@ namespace esphome
       {
       case 0x002C2425:
         ESP_LOGD(TAG, "Door closed");
-        if (this->open_binary_sensor_ != nullptr)
+
+        next_direction_ = cover::COVER_OPERATION_OPENING;
+
+        if (this->garage_cover_sensor_ != nullptr)
         {
-          this->open_binary_sensor_->publish_state(false);
+          if (garage_cover_sensor_->position != cover::COVER_CLOSED ||
+              garage_cover_sensor_->current_operation != cover::COVER_OPERATION_IDLE)
+          {
+            garage_cover_sensor_->position = cover::COVER_CLOSED;
+            garage_cover_sensor_->current_operation = cover::COVER_OPERATION_IDLE;
+            garage_cover_sensor_->publish_state();
+          }
         }
-        if (this->closed_binary_sensor_ != nullptr)
+        else
         {
-          this->closed_binary_sensor_->publish_state(true);
-        }
-        if (this->running_binary_sensor_ != nullptr)
-        {
-          this->running_binary_sensor_->publish_state(false);
+          ESP_LOGD(TAG, "garage_cover is null");
         }
         break;
       case 0x002C0C0D:
         ESP_LOGD(TAG, "Opening/Closing");
-        if (this->open_binary_sensor_ != nullptr)
+
+        if (this->garage_cover_sensor_ != nullptr)
         {
-          this->open_binary_sensor_->publish_state(false);
+          if (garage_cover_sensor_->current_operation != next_direction_)
+          {
+            garage_cover_sensor_->current_operation = next_direction_;
+            garage_cover_sensor_->publish_state();
+          }
         }
-        if (this->closed_binary_sensor_ != nullptr)
+        else
         {
-          this->closed_binary_sensor_->publish_state(false);
-        }
-        if (this->running_binary_sensor_ != nullptr)
-        {
-          this->running_binary_sensor_->publish_state(true);
+          ESP_LOGD(TAG, "garage_cover is null");
         }
         break;
       case 0x002C0607:
         ESP_LOGD(TAG, "Door open");
-        if (this->open_binary_sensor_ != nullptr)
+
+        next_direction_ = cover::COVER_OPERATION_CLOSING;
+
+        if (this->garage_cover_sensor_ != nullptr)
         {
-          this->open_binary_sensor_->publish_state(true);
+          if (garage_cover_sensor_->position != cover::COVER_OPEN ||
+              garage_cover_sensor_->current_operation != cover::COVER_OPERATION_IDLE)
+          {
+            garage_cover_sensor_->position = cover::COVER_OPEN;
+            garage_cover_sensor_->current_operation = cover::COVER_OPERATION_IDLE;
+            garage_cover_sensor_->publish_state();
+          }
         }
-        if (this->closed_binary_sensor_ != nullptr)
+        else
         {
-          this->closed_binary_sensor_->publish_state(false);
-        }
-        if (this->running_binary_sensor_ != nullptr)
-        {
-          this->running_binary_sensor_->publish_state(false);
+          ESP_LOGD(TAG, "garage_cover is null");
         }
         break;
 
@@ -172,12 +185,20 @@ namespace esphome
         {
           this->light_binary_sensor_->publish_state(true);
         }
+        else
+        {
+          ESP_LOGD(TAG, "light_binary_sensor is null");
+        }
         break;
       case 0x00551515:
         ESP_LOGD(TAG, "Light off");
         if (this->light_binary_sensor_ != nullptr)
         {
           this->light_binary_sensor_->publish_state(false);
+        }
+        else
+        {
+          ESP_LOGD(TAG, "light_binary_sensor is null");
         }
         break;
 

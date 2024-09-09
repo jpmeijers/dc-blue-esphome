@@ -14,15 +14,14 @@ esphome:
 
 dc_blue:
   data_pin: GPIO33
-#  symbol_period: 1000
+#  symbol_period: 900
 
 binary_sensor:
   - platform: dc_blue
-    open:
-      name: "Door Open"
-    closed:
-      name: "Door Closed"
-    running:
-      name: "Opening/Closing"
     light:
-      name: "Light"
+      name: "Garage Motor Light"
+
+cover:
+  - platform: dc_blue
+    name: "Garage Door"
+    device_class: garage

@@ -1,21 +1,20 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
-from esphome.components import binary_sensor
+from esphome.components import cover, binary_sensor
 from esphome.components.dc_blue import DcBlueComponent
 from esphome.components.dc_blue.constants import (
     CONF_DC_BLUE_ID,
-    CONF_LIGHT,
 )
+from esphome.const import (
+    CONF_ID,
+)
+
 import esphome.config_validation as cv
 
-DEPENDENCIES = ["dc_blue", "binary_sensor"]
+DEPENDENCIES = ["dc_blue", "cover"]
 
 
-CONFIG_SCHEMA = cv.Schema(
-    {
-        cv.Optional(CONF_LIGHT): binary_sensor.binary_sensor_schema(),
-    }
-).extend(
+CONFIG_SCHEMA = cover.COVER_SCHEMA.extend(
     {
         cv.GenerateID(CONF_DC_BLUE_ID): cv.use_id(DcBlueComponent),
     }
@@ -24,7 +23,8 @@ CONFIG_SCHEMA = cv.Schema(
 
 async def to_code(config):
     platform = await cg.get_variable(config[CONF_DC_BLUE_ID])
-
-    if light_config := config.get(CONF_LIGHT):
-        sens = await binary_sensor.new_binary_sensor(light_config)
-        cg.add(platform.set_light_binary_sensor(sens))
+    
+    sens = platform.create_garage_cover_sensor()
+    # sens = cg.new_Pvariable(config[CONF_ID])
+    await cover.register_cover(sens, config)
+    # cg.add(platform.set_garage_cover_sensor(sens))

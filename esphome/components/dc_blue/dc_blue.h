@@ -6,6 +6,8 @@
 #include "esphome/core/gpio.h"
 #include "esphome/core/hal.h"
 #include "esphome/components/binary_sensor/binary_sensor.h"
+#include "esphome/components/cover/cover.h"
+#include "dc_blue_cover.h"
 
 namespace esphome
 {
@@ -21,6 +23,12 @@ namespace esphome
       SUB_BINARY_SENSOR(running) // CONF_RUNNING
       SUB_BINARY_SENSOR(light)   // CONF_LIGHT
 
+      DcBlueCover* create_garage_cover_sensor()
+      {
+        this->garage_cover_sensor_ = new DcBlueCover();
+        return this->garage_cover_sensor_;
+      }
+
       // ========== INTERNAL METHODS ==========
       void setup() override;
       void loop() override;
@@ -34,8 +42,14 @@ namespace esphome
       int process_queue_read = 0;
       int symbol_period = 900;
 
+
+
+
     protected:
       void process_frame(uint32_t);
+
+      DcBlueCover *garage_cover_sensor_{nullptr};
+      cover::CoverOperation next_direction_{cover::COVER_OPERATION_OPENING};
     };
 
   } // namespace dc_blue

@@ -10,7 +10,7 @@ from esphome.const import CONF_ID
 from esphome import pins
 
 CODEOWNERS = ["@jpmeijers"]
-DEPENDENCIES = ["binary_sensor"]
+DEPENDENCIES = ["binary_sensor", "cover"]
 
 dc_blue_component_ns = cg.esphome_ns.namespace("dc_blue")
 DcBlueComponent = dc_blue_component_ns.class_("DcBlueComponent", cg.Component)
