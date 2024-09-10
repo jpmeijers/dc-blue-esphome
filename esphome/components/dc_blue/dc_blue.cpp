@@ -116,6 +116,9 @@ namespace esphome
         process_queue_read++;
         process_queue_read = process_queue_read % (sizeof(instance->process_queue) / sizeof(instance->process_queue[0]));
       }
+
+      // Check if we need to send a trigger pulse
+      process_trigger();
     }
 
     void DcBlueComponent::process_frame(uint32_t frame)
@@ -208,6 +211,31 @@ namespace esphome
 
       default:
         ESP_LOGD(TAG, "Unknown frame received: %08X", frame);
+      }
+    }
+
+    void DcBlueComponent::process_trigger()
+    {
+
+      if (triggers_needed > 0 && !pin_set && !pin_cleared)
+      {
+        triggers_needed--;
+        trigger_pin_->digital_write(1);
+        pin_set = true;
+        pin_set_time = millis();
+      }
+
+      if (pin_set && (millis() - pin_set_time > trigger_period))
+      {
+        trigger_pin_->digital_write(0);
+        pin_set = false;
+        pin_cleared = true;
+        pin_cleared_time = millis();
+      }
+
+      if (pin_cleared && (millis() - pin_cleared_time > clear_period))
+      {
+        pin_cleared = false;
       }
     }
 

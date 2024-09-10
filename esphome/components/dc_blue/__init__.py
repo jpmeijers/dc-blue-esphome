@@ -4,6 +4,7 @@ from esphome.cpp_helpers import gpio_pin_expression
 from esphome.components import uart
 from esphome.const import (
     CONF_DATA_PIN,
+    CONF_TRIGGER_PIN,
     CONF_ID,
 )
 from esphome.const import CONF_ID
@@ -19,6 +20,7 @@ CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(DcBlueComponent),
         cv.Required(CONF_DATA_PIN): pins.gpio_input_pin_schema,
+        cv.Required(CONF_TRIGGER_PIN): pins.gpio_output_pin_schema,
         cv.Optional("symbol_period", default=900): cv.int_range(min=100, max=10000),
     }
 ).extend(cv.COMPONENT_SCHEMA)
@@ -30,6 +32,9 @@ async def to_code(config):
 
     pin = await gpio_pin_expression(config[CONF_DATA_PIN])
     cg.add(var.set_data_pin(pin))
+
+    pin = await gpio_pin_expression(config[CONF_TRIGGER_PIN])
+    cg.add(var.set_trigger_pin(pin))
 
     if "symbol_period" in config:
         cg.add(var.set_symbol_period(config["symbol_period"]))

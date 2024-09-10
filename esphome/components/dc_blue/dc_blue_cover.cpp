@@ -32,20 +32,12 @@ namespace esphome
             if (call.get_stop())
             {
                 ESP_LOGD(TAG, "Got stop command");
-                // this->start_direction_(COVER_OPERATION_IDLE);
+                this->triggers_needed_++;
             }
             else if (call.get_toggle().has_value())
             {
                 ESP_LOGD(TAG, "Got toggle command");
-                // toggle action logic: OPEN - STOP - CLOSE
-                // if (this->last_command_ != COVER_OPERATION_IDLE)
-                // {
-                //     this->start_direction_(COVER_OPERATION_IDLE);
-                // }
-                // else
-                // {
-                //     this->toggles_needed_++;
-                // }
+                this->triggers_needed_++;
             }
         }
     } // namespace dc_blue

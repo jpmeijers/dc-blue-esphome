@@ -14,6 +14,7 @@ esphome:
 
 dc_blue:
   data_pin: GPIO33
+  trigger_pin: GPIO32
 #  symbol_period: 900
 
 binary_sensor:
