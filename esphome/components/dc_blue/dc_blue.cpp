@@ -224,12 +224,14 @@ namespace esphome
     void DcBlueComponent::process_trigger()
     {
       if(this->trigger_pin_ == nullptr) {
+        ESP_LOGD(TAG, "Trigger pin is null");
         triggers_needed = 0;
         return;
       }
 
       if (triggers_needed > 0 && !pin_set && !pin_cleared)
       {
+        ESP_LOGD(TAG, "Setting pin");
         triggers_needed--;
         trigger_pin_->digital_write(1);
         pin_set = true;
@@ -238,6 +240,7 @@ namespace esphome
 
       if (pin_set && (millis() - pin_set_time > trigger_period))
       {
+        ESP_LOGD(TAG, "Clearing pin");
         trigger_pin_->digital_write(0);
         pin_set = false;
         pin_cleared = true;
@@ -246,6 +249,7 @@ namespace esphome
 
       if (pin_cleared && (millis() - pin_cleared_time > clear_period))
       {
+        ESP_LOGD(TAG, "Cleared time passed");
         pin_cleared = false;
       }
     }
