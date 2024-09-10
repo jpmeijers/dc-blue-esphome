@@ -91,6 +91,13 @@ namespace esphome
         data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_ANY_EDGE);
       }
 
+      if(trigger_pin_ != nullptr)
+      {
+        trigger_pin_->setup();
+        trigger_pin_->pin_mode(gpio::FLAG_OUTPUT);
+        trigger_pin_->digital_write(0);
+      }
+
       timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
       timerAlarmWrite(Timer0_Cfg, this->symbol_period / 2, true);
       timerAlarmEnable(Timer0_Cfg);
@@ -216,6 +223,10 @@ namespace esphome
 
     void DcBlueComponent::process_trigger()
     {
+      if(this->trigger_pin_ == nullptr) {
+        triggers_needed = 0;
+        return;
+      }
 
       if (triggers_needed > 0 && !pin_set && !pin_cleared)
       {
