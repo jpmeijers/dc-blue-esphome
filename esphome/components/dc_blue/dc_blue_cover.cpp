@@ -32,12 +32,12 @@ namespace esphome
             if (call.get_stop())
             {
                 ESP_LOGD(TAG, "Got stop command");
-                this->triggers_needed_++;
+                (*this->triggers_needed_)++;
             }
             else if (call.get_toggle().has_value())
             {
                 ESP_LOGD(TAG, "Got toggle command");
-                this->triggers_needed_++;
+                (*this->triggers_needed_)++;
             }
         }
     } // namespace dc_blue
