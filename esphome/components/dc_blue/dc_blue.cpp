@@ -91,6 +91,13 @@ namespace esphome
         data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_ANY_EDGE);
       }
 
+      if(trigger_pin_ != nullptr)
+      {
+        trigger_pin_->setup();
+        trigger_pin_->pin_mode(gpio::FLAG_OUTPUT);
+        trigger_pin_->digital_write(0);
+      }
+
       timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
       timerAlarmWrite(Timer0_Cfg, this->symbol_period / 2, true);
       timerAlarmEnable(Timer0_Cfg);
@@ -116,6 +123,9 @@ namespace esphome
         process_queue_read++;
         process_queue_read = process_queue_read % (sizeof(instance->process_queue) / sizeof(instance->process_queue[0]));
       }
+
+      // Check if we need to send a trigger pulse
+      process_trigger();
     }
 
     void DcBlueComponent::process_frame(uint32_t frame)
@@ -208,6 +218,39 @@ namespace esphome
 
       default:
         ESP_LOGD(TAG, "Unknown frame received: %08X", frame);
+      }
+    }
+
+    void DcBlueComponent::process_trigger()
+    {
+      if(this->trigger_pin_ == nullptr) {
+        ESP_LOGD(TAG, "Trigger pin is null");
+        triggers_needed = 0;
+        return;
+      }
+
+      if (triggers_needed > 0 && !pin_set && !pin_cleared)
+      {
+        ESP_LOGD(TAG, "Setting pin");
+        triggers_needed--;
+        trigger_pin_->digital_write(1);
+        pin_set = true;
+        pin_set_time = millis();
+      }
+
+      if (pin_set && (millis() - pin_set_time > trigger_period))
+      {
+        ESP_LOGD(TAG, "Clearing pin");
+        trigger_pin_->digital_write(0);
+        pin_set = false;
+        pin_cleared = true;
+        pin_cleared_time = millis();
+      }
+
+      if (pin_cleared && (millis() - pin_cleared_time > clear_period))
+      {
+        ESP_LOGD(TAG, "Cleared time passed");
+        pin_cleared = false;
       }
     }
 

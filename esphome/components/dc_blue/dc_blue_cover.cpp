@@ -32,20 +32,52 @@ namespace esphome
             if (call.get_stop())
             {
                 ESP_LOGD(TAG, "Got stop command");
-                // this->start_direction_(COVER_OPERATION_IDLE);
+                (*this->triggers_needed_)++;
             }
             else if (call.get_toggle().has_value())
             {
                 ESP_LOGD(TAG, "Got toggle command");
-                // toggle action logic: OPEN - STOP - CLOSE
-                // if (this->last_command_ != COVER_OPERATION_IDLE)
-                // {
-                //     this->start_direction_(COVER_OPERATION_IDLE);
-                // }
-                // else
-                // {
-                //     this->toggles_needed_++;
-                // }
+                (*this->triggers_needed_)++;
+            }
+            else if (call.get_position().has_value())
+            {
+                ESP_LOGD(TAG, "Got position command");
+                if (call.get_position() == cover::COVER_OPEN)
+                {
+                    ESP_LOGD(TAG, "Got OPEN command");
+                    if (this->current_operation == cover::COVER_OPERATION_IDLE)
+                    {
+                        if (this->position != cover::COVER_OPEN)
+                        {
+                            ESP_LOGD(TAG, "Sending trigger");
+                            (*this->triggers_needed_)++;
+                        }
+                    }
+                    else
+                    {
+                        ESP_LOGD(TAG, "Not idle, ignoring OPEN");
+                    }
+                }
+                else if (call.get_position() == cover::COVER_CLOSED)
+                {
+                    ESP_LOGD(TAG, "Got CLOSE command");
+                    if (this->current_operation == cover::COVER_OPERATION_IDLE)
+                    {
+                        if (this->position != cover::COVER_CLOSED)
+                        {
+                            ESP_LOGD(TAG, "Sending trigger");
+                            (*this->triggers_needed_)++;
+                        }
+                    }
+                    else
+                    {
+                        ESP_LOGD(TAG, "Not idle, ignoring CLOSE");
+                    }
+                }
+                else
+                {
+                    ESP_LOGD(TAG, "Unsupported position");
+                }
             }
         }
     } // namespace dc_blue
