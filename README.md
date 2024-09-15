@@ -16,7 +16,7 @@ On the top side of the motor you will find two screw terminal blocks.
 
 Power is taken from `24V` and `GND`, fed through an LM7805 or similar.
 Preferably use a [switching regulator](https://www.robotics.org.za/5V1A-BUCK-REG) to prevent overheating of this regulator.
-The 5V line is conencted to the ESP32 devkit's 5V input.
+The 5V line is connected to the ESP32 devkit's 5V input.
 
 ![Power](media/PowerRegulator.png)
 
@@ -27,7 +27,7 @@ On the other side of the optocoupler we use a non-inverting circuit to connect i
 ![Input Ciruit](media/InputCircuit.png)
 
 Triggering of the door is done by shorting `BT` to ground.
-We can do this via a mosfet or an optoisolator.
+We can do this via a mosfet or an opto-isolator.
 Here we use GPIO32 to trigger the mosfet.
 
 ![Trigger Circuit](media/TriggerMosfet.png)
@@ -40,8 +40,8 @@ A better way to trigger the motor is via an optocoupler.
 
 Two example yaml config files are provided here.
 
-- `dc_blue_local.yaml` can be used to locally compile the ESPhome firmaware iamge.
-- `dc_blue.yaml` shows a working config file from the ESPhome Home Assistant adon.
+- `dc_blue_local.yaml` can be used to locally compile the ESPhome firmware image.
+- `dc_blue.yaml` shows a working config file from the ESPhome Home Assistant addon.
 
 We will now describe the main additions you will need to add the DC Blue component to your device config.
 
@@ -82,8 +82,7 @@ binary_sensor:
       name: "Garage Motor Light"
 ```
 
-By adding this sensor, you will get a boolian sensor in Home Assistant indicating the current state of the garage door motor light.
-
+By adding this sensor, you will get a boolean sensor in Home Assistant indicating the current state of the garage door motor light.
 
 ### Cover sensor
 
