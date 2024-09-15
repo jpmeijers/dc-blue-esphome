@@ -1,5 +1,7 @@
 # ET/Nice DC Blue Advanced
 
+> This component is experimental and you are using it at your own risk.
+
 This is an ESPhome component for connecting an ET/Nice DC Blue Advanced to Home Assistant.
 The component uses the DC Blue's digital interface to read the state of the door and light.
 Control is done via the button trigger input as the digital interface does not support control.
