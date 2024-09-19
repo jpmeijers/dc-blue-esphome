@@ -21,7 +21,10 @@ CONFIG_SCHEMA = cv.Schema(
         cv.GenerateID(): cv.declare_id(DcBlueComponent),
         cv.Required(CONF_DATA_PIN): pins.gpio_input_pin_schema,
         cv.Required(CONF_TRIGGER_PIN): pins.gpio_output_pin_schema,
-        cv.Optional("symbol_period", default=900): cv.int_range(min=100, max=10000),
+        cv.Optional("symbol_period", default=970): cv.int_range(min=100, max=10000),
+        cv.Optional("inverted", default=False): cv.boolean,
+        cv.Optional("trigger_period", default=1000): cv.int_range(min=100, max=10000),
+        cv.Optional("clear_period", default=1000): cv.int_range(min=100, max=10000),
     }
 ).extend(cv.COMPONENT_SCHEMA)
 
@@ -38,3 +41,12 @@ async def to_code(config):
 
     if "symbol_period" in config:
         cg.add(var.set_symbol_period(config["symbol_period"]))
+
+    if "inverted" in config:
+        cg.add(var.set_inverted(config["inverted"]))
+
+    if "trigger_period" in config:
+        cg.add(var.set_trigger_period(config["trigger_period"]))
+
+    if "clear_period" in config:
+        cg.add(var.set_clear_period(config["clear_period"]))

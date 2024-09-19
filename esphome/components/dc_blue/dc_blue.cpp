@@ -36,6 +36,10 @@ namespace esphome
       // digitalWrite(DEBUG_PIN, !digitalRead(DEBUG_PIN));
 
       bool value = instance->data_pin_->digital_read();
+      if (instance->inverted_)
+      {
+        value = !value;
+      }
 
       if (waiting_for_header)
       {
@@ -91,7 +95,7 @@ namespace esphome
         data_pin_->attach_interrupt(&pinChangeIrq, Timer0_Cfg, gpio::INTERRUPT_ANY_EDGE);
       }
 
-      if(trigger_pin_ != nullptr)
+      if (trigger_pin_ != nullptr)
       {
         trigger_pin_->setup();
         trigger_pin_->pin_mode(gpio::FLAG_OUTPUT);
@@ -99,7 +103,7 @@ namespace esphome
       }
 
       timerAttachInterrupt(Timer0_Cfg, &Timer0_ISR, true);
-      timerAlarmWrite(Timer0_Cfg, this->symbol_period / 2, true);
+      timerAlarmWrite(Timer0_Cfg, this->symbol_period_ / 2, true);
       timerAlarmEnable(Timer0_Cfg);
 
       // pinMode(DEBUG_PIN, OUTPUT);
@@ -223,7 +227,8 @@ namespace esphome
 
     void DcBlueComponent::process_trigger()
     {
-      if(this->trigger_pin_ == nullptr) {
+      if (this->trigger_pin_ == nullptr)
+      {
         ESP_LOGD(TAG, "Trigger pin is null");
         triggers_needed = 0;
         return;
@@ -238,7 +243,7 @@ namespace esphome
         pin_set_time = millis();
       }
 
-      if (pin_set && (millis() - pin_set_time > trigger_period))
+      if (pin_set && (millis() - pin_set_time > this->trigger_period_))
       {
         ESP_LOGD(TAG, "Clearing pin");
         trigger_pin_->digital_write(0);
@@ -247,7 +252,7 @@ namespace esphome
         pin_cleared_time = millis();
       }
 
-      if (pin_cleared && (millis() - pin_cleared_time > clear_period))
+      if (pin_cleared && (millis() - pin_cleared_time > this->clear_period_))
       {
         ESP_LOGD(TAG, "Cleared time passed");
         pin_cleared = false;
@@ -257,8 +262,12 @@ namespace esphome
     void DcBlueComponent::dump_config()
     {
       ESP_LOGCONFIG(TAG, "DC Blue:");
+      LOG_PIN("  Trigger Pin: ", this->trigger_pin_);
       LOG_PIN("  Data Pin: ", this->data_pin_);
-      ESP_LOGCONFIG(TAG, "  Symbol Period: %d", this->symbol_period);
+      ESP_LOGCONFIG(TAG, "  Symbol Period: %d us", this->symbol_period_);
+      ESP_LOGCONFIG(TAG, "  Inverted: %s", this->inverted_ ? "true" : "false");
+      ESP_LOGCONFIG(TAG, "  Trigger period: %d ms", this->trigger_period_);
+      ESP_LOGCONFIG(TAG, "  Clear period: %d ms", this->clear_period_);
     }
 
   } // namespace dc_blue

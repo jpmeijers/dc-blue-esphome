@@ -34,16 +34,22 @@ namespace esphome
       void setup() override;
       void loop() override;
       void dump_config() override;
+
       void set_data_pin(InternalGPIOPin *data_pin) { this->data_pin_ = data_pin; }
       void set_trigger_pin(InternalGPIOPin *trigger_pin) { this->trigger_pin_ = trigger_pin; }
-      void set_symbol_period(int period) { this->symbol_period = period; }
+      void set_symbol_period(int symbol_period) { this->symbol_period_ = symbol_period; }
+      void set_inverted(bool inverted) { this->inverted_ = inverted; }
+      void set_trigger_period(unsigned long trigger_period) { this->trigger_period_ = trigger_period; }
+      void set_clear_period(unsigned long clear_period) { this->clear_period_ = clear_period; }
+
       static void interrupt_handler();
       InternalGPIOPin *data_pin_{nullptr};
       InternalGPIOPin *trigger_pin_{nullptr};
+      bool inverted_ = false;
+
       uint32_t process_queue[4];
       int process_queue_write = 0;
       int process_queue_read = 0;
-      int symbol_period = 900; //us
 
     protected:
       void process_frame(uint32_t);
@@ -52,10 +58,12 @@ namespace esphome
       DcBlueCover *garage_cover_sensor_{nullptr};
       cover::CoverOperation next_direction_{cover::COVER_OPERATION_OPENING};
 
+      int symbol_period_ = 900;             // us
+      unsigned long trigger_period_ = 1000; // ms
+      unsigned long clear_period_ = 1000;
+
       int triggers_needed = 0;
 
-      unsigned long trigger_period = 1000; //ms
-      unsigned long clear_period = 1000;
       bool pin_set = false;
       unsigned long pin_set_time;
       unsigned long pin_cleared_time;
