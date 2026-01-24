@@ -7,7 +7,36 @@ The component uses the DC Blue's digital interface to read the state of the door
 Control is done via the button trigger input as the digital interface does not support control.
 This component will only work with the DC Blue Advanced range of door motors, not with older models without the digital interface.
 
-> **Note:** This component requires ESPHome 2025.7.0 or newer due to ESP32 Arduino framework changes.
+> **Note:** This component requires ESPHome 2025.7.0 or newer.
+
+## Supported Frameworks
+
+This component supports both ESP32 frameworks:
+
+| Framework | Status | Notes |
+|-----------|--------|-------|
+| **Arduino** | ✅ Supported | Legacy framework |
+| **ESP-IDF** | ✅ Supported | Default framework, smaller binary size |
+
+The component automatically detects which framework is being used and configures the appropriate timer APIs via compile-time directives.
+
+### Framework Selection
+
+To use the Arduino framework (default):
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+```
+
+To use the ESP-IDF framework:
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+```
 
 ## Wiring
 

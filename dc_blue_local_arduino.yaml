@@ -1,0 +1,50 @@
+# This config file builds an image using the local component. Usefult for debugging.
+
+external_components:
+  - source:
+      type: local
+      path: esphome/components
+
+logger:
+  level: DEBUG
+
+esphome:
+  name: dc-blue-test
+  build_path: .build/dc_blue_test
+  min_version: 2025.7.0
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+status_led:
+  pin: GPIO2
+
+dc_blue:
+  # Required: Pin where data is received
+  data_pin: GPIO33
+  # Required: Pin which is pulled high to "press button"
+  trigger_pin: GPIO32
+  # Optional: Time per symbol in us
+  symbol_period: 970
+  # Optional: Is the signal from the motor inverted by optocoupler?
+  inverted: True
+  # Optional: Time to press button in ms
+  trigger_period: 1000
+  # Optional: Minimum time between presses in ms
+  clear_period: 1000
+
+binary_sensor:
+  - platform: dc_blue
+    light:
+      name: "Garage Motor Light"
+      
+  - platform: dc_blue
+    ac_power:
+      name: "Garage Motor AC supply"      
+
+cover:
+  - platform: dc_blue
+    name: "Garage Door"
+    device_class: garage

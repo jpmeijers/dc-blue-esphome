@@ -1,4 +1,4 @@
-# This config file builds an image using the local component. Usefult for debugging.
+# This config file builds using ESP-IDF framework only (no Arduino)
 
 external_components:
   - source:
@@ -9,11 +9,14 @@ logger:
   level: DEBUG
 
 esphome:
-  name: dc-blue-test
-  platform: ESP32
-  board: esp32dev
-  build_path: .build/dc_blue_test
+  name: dc-blue-test-idf
+  build_path: .build/dc_blue_test_idf
   min_version: 2025.7.0
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
 
 status_led:
   pin: GPIO2

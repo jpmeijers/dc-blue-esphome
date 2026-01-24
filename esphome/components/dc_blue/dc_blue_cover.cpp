@@ -29,6 +29,12 @@ namespace esphome
 
         void DcBlueCover::control(const cover::CoverCall &call)
         {
+            if (this->triggers_needed_ == nullptr)
+            {
+                ESP_LOGE(TAG, "triggers_needed not set - cover not properly initialized");
+                return;
+            }
+
             if (call.get_stop())
             {
                 ESP_LOGD(TAG, "Got stop command");
