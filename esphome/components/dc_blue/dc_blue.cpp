@@ -7,7 +7,6 @@
 #else
 // ESP-IDF native timer API
 #include "driver/gptimer.h"
-#include "esp_attr.h"
 #endif
 
 namespace esphome
@@ -34,9 +33,9 @@ namespace esphome
     static volatile uint8_t captured_bytes = 0; // Only needs 0-24, uint8_t sufficient
     static volatile uint8_t timer_isr_calls = 0;
 
-    // Queue mask for efficient modulo in ISR - DRAM_ATTR ensures availability when cache disabled
-    static constexpr DRAM_ATTR uint8_t QUEUE_MASK = DcBlueComponent::QUEUE_SIZE - 1;
-    static_assert((DcBlueComponent::QUEUE_SIZE & QUEUE_MASK) == 0, "QUEUE_SIZE must be power of 2");
+    // Queue mask for efficient modulo in ISR (constexpr values are inlined at compile time)
+    static constexpr uint8_t QUEUE_MASK = DcBlueComponent::QUEUE_SIZE - 1;
+    static_assert((DcBlueComponent::QUEUE_SIZE & (DcBlueComponent::QUEUE_SIZE - 1)) == 0, "QUEUE_SIZE must be power of 2");
 
     // Counter for dropped frames due to queue overflow (set in ISR, read/cleared in loop)
     static volatile uint8_t frames_dropped = 0;
@@ -245,11 +244,11 @@ namespace esphome
 
     void DcBlueComponent::loop()
     {
-      // Check for dropped frames (queue overflow) - atomic exchange to avoid missing increments
+      // Check for dropped frames (queue overflow)
+      // Note: Small race window between read and write, but worst case we report drops on next iteration
       uint8_t dropped = frames_dropped;
       if (dropped > 0)
       {
-        // Note: Small race window here, but worst case we report drops on next iteration
         frames_dropped -= dropped;
         ESP_LOGW(TAG, "Queue overflow: %d frame(s) dropped", dropped);
       }
