@@ -1,6 +1,5 @@
 #pragma once
 
-#include <atomic>
 #include "esphome/core/component.h"
 #include "esphome/core/gpio.h"
 #include "esphome/core/hal.h"
