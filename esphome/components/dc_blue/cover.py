@@ -11,9 +11,8 @@ DEPENDENCIES = ["dc_blue", "cover"]
 
 DcBlueCover = dc_blue_component_ns.class_("DcBlueCover", cover.Cover, cg.Component)
 
-CONFIG_SCHEMA = cover.COVER_SCHEMA.extend(
+CONFIG_SCHEMA = cover.cover_schema(DcBlueCover).extend(
     {
-        cv.GenerateID(): cv.declare_id(DcBlueCover),
         cv.GenerateID(CONF_DC_BLUE_ID): cv.use_id(DcBlueComponent),
     }
 ).extend(cv.COMPONENT_SCHEMA)
