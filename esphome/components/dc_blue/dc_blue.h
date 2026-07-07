@@ -37,17 +37,22 @@ namespace esphome
     {
 
     public:
-      SUB_BINARY_SENSOR(open)     // CONF_OPEN
-      SUB_BINARY_SENSOR(closed)   // CONF_CLOSED
-      SUB_BINARY_SENSOR(running)  // CONF_RUNNING
-      SUB_BINARY_SENSOR(light)    // CONF_LIGHT
-      SUB_BINARY_SENSOR(ac_power) // CONF_AC_POWER
+      binary_sensor::BinarySensor *light_binary_sensor_{nullptr};
+      binary_sensor::BinarySensor *ac_power_binary_sensor_{nullptr};
 
-      DcBlueCover *create_garage_cover_sensor()
+      void set_light_binary_sensor(binary_sensor::BinarySensor *light_binary_sensor)
       {
-        this->garage_cover_sensor_ = new DcBlueCover();
+        this->light_binary_sensor_ = light_binary_sensor;
+      }
+      void set_ac_power_binary_sensor(binary_sensor::BinarySensor *ac_power_binary_sensor)
+      {
+        this->ac_power_binary_sensor_ = ac_power_binary_sensor;
+      }
+
+      void set_cover(DcBlueCover *cover)
+      {
+        this->garage_cover_sensor_ = cover;
         this->garage_cover_sensor_->set_triggers_needed(&this->triggers_needed);
-        return this->garage_cover_sensor_;
       }
 
       // ========== INTERNAL METHODS ==========

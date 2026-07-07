@@ -222,7 +222,7 @@ namespace esphome
 
       if (this->garage_cover_sensor_ != nullptr)
       {
-        this->garage_cover_sensor_->setup();
+        // garage_cover_sensor_->setup() will be called by App because it's a registered component
       }
       else
       {
@@ -423,7 +423,7 @@ namespace esphome
         return;
       }
 
-      uint32_t now = millis();
+      uint32_t now = esphome::millis();
 
       switch (trigger_state_)
       {
@@ -463,7 +463,7 @@ namespace esphome
       LOG_PIN("  Trigger Pin: ", this->trigger_pin_);
       LOG_PIN("  Data Pin: ", this->data_pin_);
       ESP_LOGCONFIG(TAG, "  Symbol Period: %d us", this->symbol_period_);
-      ESP_LOGCONFIG(TAG, "  Inverted: %s", this->inverted_ ? "true" : "false");
+      ESP_LOGCONFIG(TAG, "  Inverted: %s", YESNO(this->inverted_));
       ESP_LOGCONFIG(TAG, "  Trigger period: %d ms", this->trigger_period_);
       ESP_LOGCONFIG(TAG, "  Clear period: %d ms", this->clear_period_);
     }
