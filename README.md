@@ -212,3 +212,10 @@ If building the firmware fails with an OTA error, add the following block to the
 ota:
   - platform: esphome
 ```
+
+## Hardware
+
+The `hardware` directory contains a project file for [EasyEDA](https://easyeda.com).
+It contains a schematic and PCB design.
+The PCB layout is designed to fit inside a Hammond 1591XXMFLBK enclosure.
+Components were chosen to allow manufacturing and assembly by [LCSC](https://lcsc.com/) and [JLCPCB](https://jlcpcb.com/).
