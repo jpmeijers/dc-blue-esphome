@@ -1,13 +1,12 @@
 import esphome.codegen as cg
 import esphome.config_validation as cv
 from esphome.components import binary_sensor
-from esphome.components.dc_blue import DcBlueComponent
-from esphome.components.dc_blue.constants import (
+from . import DcBlueComponent
+from .constants import (
     CONF_DC_BLUE_ID,
     CONF_LIGHT,
     CONF_AC_POWER,
 )
-import esphome.config_validation as cv
 
 DEPENDENCIES = ["dc_blue", "binary_sensor"]
 

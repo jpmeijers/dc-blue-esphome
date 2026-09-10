@@ -9,7 +9,7 @@ namespace esphome
 {
     namespace dc_blue
     {
-        class DcBlueCover : public cover::Cover
+        class DcBlueCover : public cover::Cover, public Component
         {
 
         public:

@@ -18,7 +18,7 @@ esphome:
   # This will allow for (future) project identification,
   # configuration and updates.
   project:
-    name: esphome.project-template
+    name: jpmeijers.dc-blue-advanced
     version: "1.0"
 
 # To be able to get logs from the device via serial and api.
@@ -29,11 +29,11 @@ api:
 
 # OTA is required for Over-the-Air updating
 ota:
-  platform: esphome
+  - platform: esphome
 
 # This should point to the public location of this yaml file.
 dashboard_import:
-  package_import_url: github://esphome/esphome-project-template/project-template-esp32.yaml@v6
+  package_import_url: github://jpmeijers/dc-blue-esphome/improv.yaml@master
   import_full_config: false # or true
 
 wifi:

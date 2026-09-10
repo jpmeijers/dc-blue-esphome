@@ -1,4 +1,7 @@
 CONF_DC_BLUE_ID = "dc_blue_id"
+CONF_SYMBOL_PERIOD = "symbol_period"
+CONF_TRIGGER_PERIOD = "trigger_period"
+CONF_CLEAR_PERIOD = "clear_period"
 
 CONF_OPEN = "open"
 CONF_CLOSED = "closed"

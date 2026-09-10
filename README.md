@@ -22,20 +22,20 @@ The component automatically detects which framework is being used and configures
 
 ### Framework Selection
 
-To use the Arduino framework (default):
-```yaml
-esp32:
-  board: esp32dev
-  framework:
-    type: arduino
-```
-
-To use the ESP-IDF framework:
+To use the ESP-IDF framework (default):
 ```yaml
 esp32:
   board: esp32dev
   framework:
     type: esp-idf
+```
+
+To use the Arduino framework:
+```yaml
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
 ```
 
 ## Wiring
@@ -71,10 +71,12 @@ A better way to trigger the motor is via an optocoupler.
 
 ## Configuration
 
-Two example yaml config files are provided here.
+Two example yaml config files are provided here for local compilation:
 
-- `dc_blue_local.yaml` can be used to locally compile the ESPhome firmware image.
-- `dc_blue.yaml` shows a working config file from the ESPhome Home Assistant addon.
+- `dc_blue_local_arduino.yaml` uses the Arduino framework.
+- `dc_blue_local_idf.yaml` uses the ESP-IDF framework.
+
+`dc_blue.yaml` shows a working config file for use in the ESPhome Home Assistant addon.
 
 We will now describe the main additions you will need to add the DC Blue component to your device config.
 
